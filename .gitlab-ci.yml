@@ -1,0 +1,32 @@
+stages:
+  - homologation
+  - production
+
+
+homologation:
+  stage: homologation
+  before_script:
+    - mkdir -p ~/.ssh
+    - echo -e "$HOMOLOGATION_SERVER" > ~/.ssh/id_rsa_site_homolog
+    - chmod 600 ~/.ssh/id_rsa_site_homolog
+  environment:
+    name: homologation
+  script:
+    - cd /var/www/html/site-ssr/ && git pull http://vhsys-ci:vhsys-ci@18.228.224.163/vhsys/web/site-ssr.git homolog && git checkout homolog && npm install && pm2 restart site-next
+  only:
+    - homolog
+    - merge-request
+
+production:
+  stage: production
+  before_script:
+    - mkdir -p ~/.ssh
+    - echo -e "$PRODUCTION_SERVER_SITE" > ~/.ssh/id_rsa_site_prod
+    - chmod 600 ~/.ssh/id_rsa_site_prod
+  environment:
+    name: production
+  script:
+    - cd /var/www/site-nextjs && whoami && git pull http://vhsys-ci:vhsys-ci@18.228.224.163/vhsys/web/site-ssr.git master && npm i && npm run build && pm2 restart site-next
+  only:
+    - master
+    - merge-request

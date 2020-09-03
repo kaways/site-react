@@ -1,0 +1,12 @@
+version: '2'
+services:
+  site-next:
+    environment:
+      - SITE_PROCESS_NAME=next-site
+    build:
+      context: .
+      dockerfile: container/node/Dockerfile
+    image: node:8
+    ports:
+      - "3000:3000"
+    container_name: "SITE_SERVICE"
